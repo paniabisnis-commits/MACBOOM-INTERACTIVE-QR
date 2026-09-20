@@ -90,3 +90,14 @@
 
 /* Find the Macboom: reveal the macaroni and both ZONK outcomes together. */
 .lucky-box-game.phase-result .lucky-box{overflow:visible;animation:lucky-result-reveal .48s ease both;background:#fff7e9;box-shadow:0 7px 0 #9d3020,inset 0 0 0 3px #fff3cf}.lucky-box-game.phase-result .lucky-box:nth-child(2){animation-delay:.1s}.lucky-box-game.phase-result .lucky-box:nth-child(3){animation-delay:.2s}.lucky-box-game.phase-result .lucky-box.winning{background:#ffcf42;box-shadow:0 7px 0 #a23a20,inset 0 0 0 3px #fff3cf,0 0 24px #ffcf4299}.lucky-box-game.phase-result .box-number,.lucky-box-game.phase-result .box-ribbon,.lucky-box-game.phase-result .lucky-box:before{opacity:0}.lucky-reveal{position:absolute;z-index:4;inset:6px;display:grid;place-items:center;pointer-events:none}.lucky-reveal.macaroni .macboom-object{filter:none;max-width:100%;height:auto}.lucky-reveal.zonk{border:3px solid #d7442a;border-radius:50%;background:#fff2e8;color:#d7442a;align-content:center;gap:0;transform:rotate(-10deg);font-family:'Space Grotesk'}.lucky-reveal.zonk b{font-size:41px;line-height:.7}.lucky-reveal.zonk small{font:700 10px/1 'DM Mono';letter-spacing:.8px}@keyframes lucky-result-reveal{from{opacity:0;transform:translateY(-14px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}@media(max-width:760px){.lucky-reveal.zonk b{font-size:31px}.lucky-reveal.zonk small{font-size:8px}.lucky-reveal{inset:5px}}
+
+.footer-copyright {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.footer-tagline {
+  text-align: center;
+  width: 100%;
+}
