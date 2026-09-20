@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="360" viewBox="0 0 520 360" fill="none">
+  <g stroke="#FFF7E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".42">
+    <!-- macaroni -->
+    <path d="M50 74c14-27 44-27 58 0M50 96c14 27 44 27 58 0"/>
+    <path d="M350 284c14-27 44-27 58 0M350 306c14 27 44 27 58 0"/>
+    <!-- sauce droplet -->
+    <path d="M432 53c0 0-22 27-22 42a22 22 0 1 0 44 0c0-15-22-42-22-42Z" fill="#FFF7E9" fill-opacity=".24"/>
+    <!-- game controller -->
+    <path d="M176 200c-13-5-26 6-30 26l-5 24c-3 15 13 22 23 11l13-15h41l13 15c10 11 26 4 23-11l-5-24c-4-20-17-31-30-26l-11 4h-21l-11-4Z" fill="#FFF7E9" fill-opacity=".17"/>
+    <path d="M164 228h17m-8-8v17m40-9h2m13 0h2"/>
+    <!-- voucher -->
+    <path d="M284 48h78v20a13 13 0 0 0 0 26v20h-78V94a13 13 0 0 0 0-26V48Z" fill="#FFF7E9" fill-opacity=".18"/>
+    <path d="M323 52v58" stroke-dasharray="5 7"/>
+    <!-- reward star -->
+    <path d="m82 272 8 18 19 2-14 13 4 19-17-10-17 10 4-19-14-13 19-2 8-18Z" fill="#FFF7E9" fill-opacity=".26"/>
+  </g>
+  <!-- seasoning -->
+  <g fill="#FFF7E9" opacity=".48"><circle cx="116" cy="159" r="4"/><circle cx="96" cy="176" r="3"/><circle cx="128" cy="181" r="3"/><circle cx="468" cy="208" r="4"/><circle cx="486" cy="223" r="3"/><circle cx="452" cy="230" r="3"/></g>
+</svg>
