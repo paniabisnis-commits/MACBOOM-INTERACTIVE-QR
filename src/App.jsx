@@ -967,7 +967,8 @@ const REWARDS = [
     color: "dana",
     image: "/dana.png",
     points: 100,
-    description: "Tukar 100 poin untuk membuka satu link DANA Kaget yang masih tersedia.",
+    claimUrl: "https://link.dana.id/danakaget?c=s48259uyt&r=iE6rFs&orderId=20260930101214549815010300166486000143139",
+    description: "Tukar 100 poin untuk membuka link DANA Kaget. Saldo mengikuti kuota link dan siapa cepat dia dapat.",
   },
   {
     id: "shopee",
@@ -976,7 +977,8 @@ const REWARDS = [
     color: "shopee",
     image: "/spay.webp",
     points: 100,
-    description: "Tukar 100 poin untuk membuka satu link Saldo Kaget ShopeePay yang masih tersedia.",
+    claimUrl: "https://app.shopeepay.co.id/u/uRYL7QuGUBgRKhRTEYRby",
+    description: "Tukar 100 poin untuk membuka link Saldo Kaget ShopeePay. Saldo mengikuti kuota link dan siapa cepat dia dapat.",
   },
 ];
 
@@ -1057,7 +1059,7 @@ function ClaimModal({ reward, points, onClose, onConfirm, busy }) {
           </strong>
         </div>
         {isWallet && (
-          <p className="demo-disclaimer">Link dibagikan terbatas sesuai kuota yang disiapkan admin. Saldo diklaim di aplikasi resmi dan bergantung pada ketersediaan link.</p>
+          <p className="demo-disclaimer">Link dibuka langsung di aplikasi resmi. Tanpa backend, poin dan akses link tidak bisa dibatasi atau diverifikasi oleh website.</p>
         )}
         <div className="claim-actions">
           <button className="secondary-button" onClick={onClose}>
@@ -1156,7 +1158,7 @@ function Rewards({ points, claims, onSelectReward, onNeedPoints }) {
             <small>Boom Points</small>
           </div>
           <p className="local-note">
-            <Icon name="check" size={13} /> Klaim wallet diproses oleh server
+            <Icon name="check" size={13} /> Klaim membuka tautan aplikasi resmi
           </p>
         </div>
         <div>
@@ -1218,7 +1220,7 @@ function Rewards({ points, claims, onSelectReward, onNeedPoints }) {
             })}
           </div>
           <p className="reward-note">
-            DANA Kaget dan ShopeePay Kaget memakai link kupon terbatas yang disiapkan admin.
+            Link saldo kaget dibuka langsung di aplikasi. Siapa pun yang mendapatkan link bisa mencoba klaim sampai kuota link habis.
           </p>
         </div>
       </section>
@@ -1242,15 +1244,6 @@ function App() {
     readStoredList("macboom-reward-claims"),
   );
   const [selectedReward, setSelectedReward] = useState(null);
-  const [claimBusy, setClaimBusy] = useState(false);
-  const [userId] = useState(() => {
-    let id = localStorage.getItem("macboom-user-id");
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem("macboom-user-id", id);
-    }
-    return id;
-  });
   const [toast, setToast] = useState("");
   const earnedActivities = useRef(
     new Set(readSessionList("macboom-demo-earned")),
@@ -1287,39 +1280,15 @@ function App() {
     notify(successMessage);
     return true;
   };
-  const claimReward = async (reward) => {
+  const claimReward = (reward) => {
     if (
       points < reward.points ||
       claims.some((claim) => claim.rewardId === reward.id)
     )
       return;
     const isWallet = reward.type === "dana" || reward.type === "shopee";
-    let couponUrl = null;
-    if (isWallet) {
-      setClaimBusy(true);
-      try {
-        const response = await fetch("/api/claims", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, rewardId: reward.id, points }),
-        });
-        let data;
-        try {
-          data = await response.json();
-        } catch {
-          throw new Error(
-            "Backend tidak mengirim respons JSON. Pastikan npm run server aktif, lalu restart npm run dev agar proxy API dimuat.",
-          );
-        }
-        if (!response.ok) throw new Error(data.error || "Klaim tidak berhasil.");
-        couponUrl = data.claim.url;
-      } catch (error) {
-        notify(error.message || "Server reward belum bisa dihubungi.");
-        setClaimBusy(false);
-        return;
-      }
-      setClaimBusy(false);
-    }
+    const couponUrl = isWallet ? reward.claimUrl : null;
+    if (couponUrl) window.open(couponUrl, "_blank", "noopener,noreferrer");
     const claim = {
       id: `${reward.id}-${Date.now()}`,
       rewardId: reward.id,
@@ -1335,7 +1304,7 @@ function App() {
     setSelectedReward(null);
     notify(
       isWallet
-        ? "Penukaran berhasil! Link saldo kaget sudah tersedia di riwayat reward."
+        ? "Link reward dibuka. Klaim saldo di aplikasi dan cek kuota yang tersedia."
         : "Reward berhasil diklaim. Kode simulasi sudah tersimpan.",
     );
   };
@@ -1481,7 +1450,7 @@ function App() {
           points={points}
           onClose={() => setSelectedReward(null)}
           onConfirm={claimReward}
-          busy={claimBusy}
+          busy={false}
         />
       )}
       <Toast message={toast} />

@@ -1,5 +1,7 @@
 # Backend kupon reward
 
+> Catatan: deploy yang sekarang dipilih adalah mode statis tanpa backend. Ikuti [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md). Panduan ini hanya dipakai kembali jika backend diaktifkan.
+
 ## Deploy ke Vercel
 
 Project menyediakan Vercel Functions di folder `api/` dan PostgreSQL melalui Neon. Vercel Functions tidak memakai file SQLite lokal sebagai penyimpanan persisten; klaim kupon production disimpan di database PostgreSQL.
