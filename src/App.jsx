@@ -967,7 +967,7 @@ const REWARDS = [
     color: "dana",
     image: "/dana.png",
     points: 100,
-    description: "Klaim simulasi; tidak ada pencairan dana sungguhan.",
+    description: "Tukar 100 poin untuk membuka satu link DANA Kaget yang masih tersedia.",
   },
   {
     id: "shopee",
@@ -976,7 +976,7 @@ const REWARDS = [
     color: "shopee",
     image: "/spay.webp",
     points: 100,
-    description: "Klaim simulasi; tidak ada pencairan dana sungguhan.",
+    description: "Tukar 100 poin untuk membuka satu link Saldo Kaget ShopeePay yang masih tersedia.",
   },
 ];
 
@@ -1006,7 +1006,7 @@ function Toast({ message }) {
   ) : null;
 }
 
-function ClaimModal({ reward, points, onClose, onConfirm }) {
+function ClaimModal({ reward, points, onClose, onConfirm, busy }) {
   const confirmRef = useRef(null);
   const isWallet = reward.type === "dana" || reward.type === "shopee";
   useEffect(() => {
@@ -1035,7 +1035,7 @@ function ClaimModal({ reward, points, onClose, onConfirm }) {
         >
           <Icon name="close" />
         </button>
-        <p className="eyebrow">KONFIRMASI KLAIM · SIMULASI</p>
+        <p className="eyebrow">KONFIRMASI PENUKARAN</p>
         <div className={`claim-icon ${reward.color}`}>
           {reward.image ? (
             <img src={reward.image} alt="" />
@@ -1057,10 +1057,7 @@ function ClaimModal({ reward, points, onClose, onConfirm }) {
           </strong>
         </div>
         {isWallet && (
-          <p className="demo-disclaimer">
-            Ini hanya feedback interaktif untuk presentasi; saldo e-wallet tidak
-            akan diproses.
-          </p>
+          <p className="demo-disclaimer">Link dibagikan terbatas sesuai kuota yang disiapkan admin. Saldo diklaim di aplikasi resmi dan bergantung pada ketersediaan link.</p>
         )}
         <div className="claim-actions">
           <button className="secondary-button" onClick={onClose}>
@@ -1070,8 +1067,9 @@ function ClaimModal({ reward, points, onClose, onConfirm }) {
             ref={confirmRef}
             className="dark-button"
             onClick={() => onConfirm(reward)}
+            disabled={busy}
           >
-            Tukar sekarang <Icon name="arrow" />
+            {busy ? "Memproses…" : "Tukar sekarang"} {!busy && <Icon name="arrow" />}
           </button>
         </div>
       </div>
@@ -1083,8 +1081,8 @@ function RewardHistory({ claims }) {
   return (
     <section className="reward-history" aria-labelledby="reward-history-title">
       <div>
-        <p className="kicker orange">
-          <span /> KOLEKSI DEMO
+          <p className="kicker orange">
+          <span /> RIWAYAT REWARD
         </p>
         <h2 id="reward-history-title">Reward kamu</h2>
       </div>
@@ -1115,8 +1113,7 @@ function RewardHistory({ claims }) {
                   </>
                 ) : (
                   <>
-                    <span>STATUS DEMO</span>
-                    <strong>Siap diverifikasi</strong>
+                    {claim.url ? <><span>LINK KLAIM</span><a href={claim.url} target="_blank" rel="noreferrer">Buka reward ↗</a></> : <><span>STATUS</span><strong>Menunggu link</strong></>}
                   </>
                 )}
               </div>
@@ -1159,7 +1156,7 @@ function Rewards({ points, claims, onSelectReward, onNeedPoints }) {
             <small>Boom Points</small>
           </div>
           <p className="local-note">
-            <Icon name="check" size={13} /> Demo tersimpan di perangkat ini
+            <Icon name="check" size={13} /> Klaim wallet diproses oleh server
           </p>
         </div>
         <div>
@@ -1221,8 +1218,7 @@ function Rewards({ points, claims, onSelectReward, onNeedPoints }) {
             })}
           </div>
           <p className="reward-note">
-            Semua reward di halaman ini adalah simulasi interaktif untuk
-            presentasi dan tersimpan hanya di perangkat ini.
+            DANA Kaget dan ShopeePay Kaget memakai link kupon terbatas yang disiapkan admin.
           </p>
         </div>
       </section>
@@ -1246,6 +1242,15 @@ function App() {
     readStoredList("macboom-reward-claims"),
   );
   const [selectedReward, setSelectedReward] = useState(null);
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [userId] = useState(() => {
+    let id = localStorage.getItem("macboom-user-id");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("macboom-user-id", id);
+    }
+    return id;
+  });
   const [toast, setToast] = useState("");
   const earnedActivities = useRef(
     new Set(readSessionList("macboom-demo-earned")),
@@ -1282,18 +1287,45 @@ function App() {
     notify(successMessage);
     return true;
   };
-  const claimReward = (reward) => {
+  const claimReward = async (reward) => {
     if (
       points < reward.points ||
       claims.some((claim) => claim.rewardId === reward.id)
     )
       return;
     const isWallet = reward.type === "dana" || reward.type === "shopee";
+    let couponUrl = null;
+    if (isWallet) {
+      setClaimBusy(true);
+      try {
+        const response = await fetch("/api/claims", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, rewardId: reward.id, points }),
+        });
+        let data;
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error(
+            "Backend tidak mengirim respons JSON. Pastikan npm run server aktif, lalu restart npm run dev agar proxy API dimuat.",
+          );
+        }
+        if (!response.ok) throw new Error(data.error || "Klaim tidak berhasil.");
+        couponUrl = data.claim.url;
+      } catch (error) {
+        notify(error.message || "Server reward belum bisa dihubungi.");
+        setClaimBusy(false);
+        return;
+      }
+      setClaimBusy(false);
+    }
     const claim = {
       id: `${reward.id}-${Date.now()}`,
       rewardId: reward.id,
       name: reward.name,
       claimedAt: new Date().toISOString(),
+      url: couponUrl,
       code: isWallet
         ? null
         : `MB-${reward.id.slice(0, 3).toUpperCase()}-${String(Date.now()).slice(-6)}`,
@@ -1303,7 +1335,7 @@ function App() {
     setSelectedReward(null);
     notify(
       isWallet
-        ? "Klaim demo berhasil. Reward siap diverifikasi."
+        ? "Penukaran berhasil! Link saldo kaget sudah tersedia di riwayat reward."
         : "Reward berhasil diklaim. Kode simulasi sudah tersimpan.",
     );
   };
@@ -1449,6 +1481,7 @@ function App() {
           points={points}
           onClose={() => setSelectedReward(null)}
           onConfirm={claimReward}
+          busy={claimBusy}
         />
       )}
       <Toast message={toast} />
