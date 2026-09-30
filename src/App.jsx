@@ -1,84 +1,1458 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react";
 
 const Icon = ({ name, size = 22 }) => {
-  const icons = { star: '★', gift: '✦', play: '▶', arrow: '→', check: '✓', close: '×', fire: '✷', spark: '✺', bolt: 'ϟ' }
-  return <span aria-hidden="true" style={{ fontSize: size }}>{icons[name]}</span>
-}
+  const icons = {
+    star: "★",
+    gift: "✦",
+    play: "▶",
+    arrow: "→",
+    check: "✓",
+    close: "×",
+    fire: "✷",
+    spark: "✺",
+    bolt: "ϟ",
+  };
+  return (
+    <span aria-hidden="true" style={{ fontSize: size }}>
+      {icons[name]}
+    </span>
+  );
+};
 
-function MacboomObject({ className = '', size = 72, ...props }) { return <img className={`macboom-object ${className}`} src="/logo_macboom_game.png" width={size} height={size} draggable="false" alt="Objek Macboom" {...props}/> }
+function MacboomObject({ className = "", size = 72, ...props }) {
+  return (
+    <img
+      className={`macboom-object ${className}`}
+      src="/logo_macboom_game.png"
+      width={size}
+      height={size}
+      draggable="false"
+      alt="Objek Macboom"
+      {...props}
+    />
+  );
+}
 
 function Header({ onReview }) {
-  return <header className="header"><a className="logo" href="#home" aria-label="Macboom home"><span>mac</span>boom<i>.</i></a><nav><a href="#cara-kerja">Cara kerja</a><a href="#games">Games</a><a href="#hadiah">Rewards</a><button onClick={onReview}>Review Macboom</button></nav></header>
+  return (
+    <header className="header">
+      <a className="logo" href="#home" aria-label="Macboom home">
+        <span>mac</span>boom<i>.</i>
+      </a>
+      <nav>
+        <a href="#cara-kerja">Cara kerja</a>
+        <a href="#games">Games</a>
+        <a href="#hadiah">Rewards</a>
+        <button onClick={onReview}>Review Macboom</button>
+      </nav>
+    </header>
+  );
 }
 
-function ProductVisual() {
-  return <div className="product-stage" aria-label="Ilustrasi kemasan Macboom"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><span className="floating-chip chip-one">✦</span><span className="floating-chip chip-two">✷</span><div className="packet"><div className="packet-top"/><div className="packet-brand">mac<span>boom</span><sup>®</sup></div><div className="packet-label">MAKARONI<br/><strong>SAUS PEDAS</strong></div><div className="packet-bowl"><span>〰</span><span>〰</span><span>〰</span></div><div className="packet-bottom">RASA JUARA <b>•</b> 100% NAGIH</div></div><div className="scan-badge"><div className="qr-mini"><i/><i/><i/><i/><i/></div><span>SCAN ME!</span></div></div>
+function ProductVisual({ onScan }) {
+  return (
+    <div className="product-stage" aria-label="Ilustrasi kemasan Macboom">
+      <div className="orbit orbit-one" />
+      <div className="orbit orbit-two" />
+      <span className="floating-chip chip-one">✦</span>
+      <span className="floating-chip chip-two">✷</span>
+      <div className="packet">
+        <div className="packet-top" />
+        <div className="packet-brand">
+          mac<span>boom</span>
+          <sup>®</sup>
+        </div>
+        <div className="packet-label">
+          MAKARONI
+          <br />
+          <strong>SAUS PEDAS</strong>
+        </div>
+        <div className="packet-bowl">
+          <span>〰</span>
+          <span>〰</span>
+          <span>〰</span>
+        </div>
+        <div className="packet-bottom">
+          RASA JUARA <b>•</b> 100% NAGIH
+        </div>
+      </div>
+      <button
+        className="scan-badge"
+        type="button"
+        onClick={onScan}
+        aria-label="Simulasikan scan QR kemasan untuk mendapatkan 10 poin"
+      >
+        <div className="qr-mini">
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </div>
+        <span>SCAN ME!</span>
+      </button>
+    </div>
+  );
 }
 
-function StepVisual({ icon }) { if (icon === 'scan') return <svg viewBox="0 0 48 48" className="step-svg" aria-hidden="true"><path d="M8 18v-7a3 3 0 0 1 3-3h7M30 8h7a3 3 0 0 1 3 3v7M40 30v7a3 3 0 0 1-3 3h-7M18 40h-7a3 3 0 0 1-3-3v-7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/><path d="M17 17h5v5h-5zM26 17h5v5h-5zM17 26h5v5h-5zM27 27h4v4h-4z" fill="currentColor"/></svg>; return <Icon name={icon} size={26}/> }
-function StepCard({ icon, title, text, color }) { return <article className={`step-card ${color}`}><div className="step-icon"><StepVisual icon={icon}/></div><h3>{title}</h3><p>{text}</p></article> }
-function StepConnector({ reverse = false }) { return <div className={`step-connector ${reverse ? 'reverse' : ''}`} aria-hidden="true"><span className="journey-line"/><MacboomObject size={44}/></div> }
-function RewardIcon({ type }) { if (type === 'voucher') return <svg viewBox="0 0 80 80" className="reward-svg" aria-hidden="true"><path d="M13 24h54v13a8 8 0 0 0 0 16v13H13V53a8 8 0 0 0 0-16V24Z" fill="currentColor"/><path d="M40 27v36" stroke="#5d4d91" strokeWidth="3" strokeDasharray="5 4"/><path d="m30 38 7 7 14-14" fill="none" stroke="#5d4d91" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/></svg>; if (type === 'discount') return <svg viewBox="0 0 80 80" className="reward-svg" aria-hidden="true"><path d="M18 13h32l14 14v32a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V21a8 8 0 0 1 8-8Z" fill="currentColor"/><circle cx="29" cy="32" r="5" fill="#a95a21"/><circle cx="51" cy="51" r="5" fill="#a95a21"/><path d="m28 54 24-26" stroke="#a95a21" strokeWidth="5" strokeLinecap="round"/></svg>; if (type === 'dana') return <svg viewBox="0 0 122 80" className="reward-svg brand-dana" aria-label="DANA"><rect x="3" y="12" width="116" height="56" rx="14" fill="#118EEA"/><circle cx="31" cy="40" r="16" fill="white"/><path d="M20 40c0-7 5-12 12-12 6 0 10 4 11 9h-8c-1-1-2-2-4-2-3 0-5 2-5 5s2 5 5 5c2 0 3-1 4-2h8c-1 5-5 9-11 9-7 0-12-5-12-12Z" fill="#118EEA"/><text x="52" y="49" fill="white" fontFamily="Arial, sans-serif" fontSize="23" fontWeight="700">DANA</text></svg>; return <svg viewBox="0 0 100 80" className="reward-svg brand-shopee" aria-label="ShopeePay"><rect x="6" y="8" width="64" height="64" rx="16" fill="#EE4D2D"/><path d="M28 30h20l3 28H25l3-28Zm5 0c0-7 10-7 10 0" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/><path d="M43 38c-2-2-7-1-7 2 0 4 8 2 8 7 0 3-3 5-7 5-3 0-5-1-7-3" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"/><text x="74" y="48" fill="white" fontFamily="Arial, sans-serif" fontSize="15" fontWeight="700">Pay</text></svg> }
-const Scale = ({ label, value, onChange }) => <div className="scale-field"><span>{label}</span><div>{[1,2,3,4,5].map(n => <button type="button" key={n} className={n <= value ? 'active' : ''} onClick={() => onChange(n)} aria-label={`${label} ${n} dari 5`}>{n}</button>)}</div><small>{value ? ['','Kurang','Cukup','Oke','Mantap','Juara!'][value] : 'Pilih nilai'}</small></div>
+function StepVisual({ icon }) {
+  if (icon === "scan")
+    return (
+      <svg viewBox="0 0 48 48" className="step-svg" aria-hidden="true">
+        <path
+          d="M8 18v-7a3 3 0 0 1 3-3h7M30 8h7a3 3 0 0 1 3 3v7M40 30v7a3 3 0 0 1-3 3h-7M18 40h-7a3 3 0 0 1-3-3v-7"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <path
+          d="M17 17h5v5h-5zM26 17h5v5h-5zM17 26h5v5h-5zM27 27h4v4h-4z"
+          fill="currentColor"
+        />
+      </svg>
+    );
+  return <Icon name={icon} size={26} />;
+}
+function StepCard({ icon, title, text, color }) {
+  return (
+    <article className={`step-card ${color}`}>
+      <div className="step-icon">
+        <StepVisual icon={icon} />
+      </div>
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </article>
+  );
+}
+function StepConnector({ reverse = false }) {
+  return (
+    <div
+      className={`step-connector ${reverse ? "reverse" : ""}`}
+      aria-hidden="true"
+    >
+      <span className="journey-line" />
+      <MacboomObject size={44} />
+    </div>
+  );
+}
+function RewardIcon({ type }) {
+  if (type === "voucher")
+    return (
+      <svg viewBox="0 0 80 80" className="reward-svg" aria-hidden="true">
+        <path
+          d="M13 24h54v13a8 8 0 0 0 0 16v13H13V53a8 8 0 0 0 0-16V24Z"
+          fill="currentColor"
+        />
+        <path
+          d="M40 27v36"
+          stroke="#5d4d91"
+          strokeWidth="3"
+          strokeDasharray="5 4"
+        />
+        <path
+          d="m30 38 7 7 14-14"
+          fill="none"
+          stroke="#5d4d91"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  if (type === "discount")
+    return (
+      <svg viewBox="0 0 80 80" className="reward-svg" aria-hidden="true">
+        <path
+          d="M18 13h32l14 14v32a8 8 0 0 1-8 8H18a8 8 0 0 1-8-8V21a8 8 0 0 1 8-8Z"
+          fill="currentColor"
+        />
+        <circle cx="29" cy="32" r="5" fill="#a95a21" />
+        <circle cx="51" cy="51" r="5" fill="#a95a21" />
+        <path
+          d="m28 54 24-26"
+          stroke="#a95a21"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  if (type === "dana")
+    return (
+      <svg
+        viewBox="0 0 122 80"
+        className="reward-svg brand-dana"
+        aria-label="DANA"
+      >
+        <rect x="3" y="12" width="116" height="56" rx="14" fill="#118EEA" />
+        <circle cx="31" cy="40" r="16" fill="white" />
+        <path
+          d="M20 40c0-7 5-12 12-12 6 0 10 4 11 9h-8c-1-1-2-2-4-2-3 0-5 2-5 5s2 5 5 5c2 0 3-1 4-2h8c-1 5-5 9-11 9-7 0-12-5-12-12Z"
+          fill="#118EEA"
+        />
+        <text
+          x="52"
+          y="49"
+          fill="white"
+          fontFamily="Arial, sans-serif"
+          fontSize="23"
+          fontWeight="700"
+        >
+          DANA
+        </text>
+      </svg>
+    );
+  return (
+    <svg
+      viewBox="0 0 100 80"
+      className="reward-svg brand-shopee"
+      aria-label="ShopeePay"
+    >
+      <rect x="6" y="8" width="64" height="64" rx="16" fill="#EE4D2D" />
+      <path
+        d="M28 30h20l3 28H25l3-28Zm5 0c0-7 10-7 10 0"
+        fill="none"
+        stroke="white"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M43 38c-2-2-7-1-7 2 0 4 8 2 8 7 0 3-3 5-7 5-3 0-5-1-7-3"
+        fill="none"
+        stroke="white"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <text
+        x="74"
+        y="48"
+        fill="white"
+        fontFamily="Arial, sans-serif"
+        fontSize="15"
+        fontWeight="700"
+      >
+        Pay
+      </text>
+    </svg>
+  );
+}
+const Scale = ({ label, value, onChange }) => (
+  <div className="scale-field">
+    <span>{label}</span>
+    <div>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          type="button"
+          key={n}
+          className={n <= value ? "active" : ""}
+          onClick={() => onChange(n)}
+          aria-label={`${label} ${n} dari 5`}
+        >
+          {n}
+        </button>
+      ))}
+    </div>
+    <small>
+      {value
+        ? ["", "Kurang", "Cukup", "Oke", "Mantap", "Juara!"][value]
+        : "Pilih nilai"}
+    </small>
+  </div>
+);
 
 function ReviewModal({ onClose, onReward }) {
-  const [rating, setRating] = useState(0); const [sent, setSent] = useState(false)
-  const [scores, setScores] = useState({ crunch: 0, taste: 0, pack: 0, price: 0 })
-  const setScore = (name, value) => setScores({ ...scores, [name]: value })
-  const submit = e => { e.preventDefault(); if (rating && Object.values(scores).every(Boolean)) { setSent(true); onReward(20) } }
-  return <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Review Macboom"><div className="review-modal review-long"><button className="close" onClick={onClose}><Icon name="close"/></button>{sent ? <div className="thanks"><div className="thanks-icon">✓</div><p className="eyebrow">+20 BOOM POINTS</p><h2>Terima kasih!</h2><p>Review kamu sudah masuk. Poin Boom sudah ditambahkan ke akunmu.</p><button className="dark-button" onClick={onClose}>Mantap!</button></div> : <form onSubmit={submit}><span className="eyebrow">REVIEW MACBOOM · +20 POIN</span><h2>Gimana Macboom-mu?</h2><p className="modal-copy">Ulasan jujurmu bantu kami bikin makaroni yang makin boom.</p><label className="field-label">Rating keseluruhan</label><div className="stars" aria-label="Pilih rating">{[1,2,3,4,5].map(n => <button type="button" key={n} className={n <= rating ? 'selected' : ''} onClick={() => setRating(n)} aria-label={`${n} bintang`}>★</button>)}</div><label className="field-label">Varian rasa</label><select required defaultValue=""><option value="" disabled>Pilih varian yang kamu coba</option><option>Mentai</option><option>Pedas Juara</option><option>Barbeque</option><option>Keju</option></select><div className="review-scales"><Scale label="Kerenyahan" value={scores.crunch} onChange={n => setScore('crunch', n)}/><Scale label="Rasa" value={scores.taste} onChange={n => setScore('taste', n)}/><Scale label="Kemasan" value={scores.pack} onChange={n => setScore('pack', n)}/><Scale label="Harga" value={scores.price} onChange={n => setScore('price', n)}/></div><label className="field-label">Komentar atau saran</label><textarea placeholder="Ceritakan pengalamanmu..." required/><label className="buy-again"><input type="checkbox"/> <span>Mau beli Macboom lagi!</span></label><button className="dark-button" type="submit">Kirim review +20 poin <Icon name="arrow"/></button></form>}</div></div>
+  const [rating, setRating] = useState(0);
+  const [sent, setSent] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [scores, setScores] = useState({
+    crunch: 0,
+    taste: 0,
+    pack: 0,
+    price: 0,
+  });
+  useEffect(() => {
+    const escape = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", escape);
+    return () => window.removeEventListener("keydown", escape);
+  }, [onClose]);
+  const setScore = (name, value) => setScores({ ...scores, [name]: value });
+  const submit = (e) => {
+    e.preventDefault();
+    if (rating && Object.values(scores).every(Boolean)) {
+      if (onReward("review", 20, "Review terkirim! +20 Boom Points"))
+        setSent(true);
+      else
+        setNotice(
+          "Review hanya bisa mendapat poin sekali dalam sesi demo ini.",
+        );
+    }
+  };
+  return (
+    <div
+      className="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Review Macboom"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="review-modal review-long">
+        <button className="close" onClick={onClose} aria-label="Tutup review">
+          <Icon name="close" />
+        </button>
+        {sent ? (
+          <div className="thanks">
+            <div className="thanks-icon">✓</div>
+            <p className="eyebrow">+20 BOOM POINTS</p>
+            <h2>Terima kasih!</h2>
+            <p>
+              Review kamu sudah masuk. Poin Boom sudah ditambahkan ke akunmu.
+            </p>
+            <button className="dark-button" onClick={onClose}>
+              Mantap!
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit}>
+            <span className="eyebrow">REVIEW MACBOOM · +20 POIN</span>
+            <h2>Gimana Macboom-mu?</h2>
+            <p className="modal-copy">
+              Ulasan jujurmu bantu kami bikin makaroni yang makin boom.
+            </p>
+            <label className="field-label">Rating keseluruhan</label>
+            <div className="stars" aria-label="Pilih rating">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  type="button"
+                  key={n}
+                  className={n <= rating ? "selected" : ""}
+                  onClick={() => setRating(n)}
+                  aria-label={`${n} bintang`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <label className="field-label">Varian rasa</label>
+            <select required defaultValue="">
+              <option value="" disabled>
+                Pilih varian yang kamu coba
+              </option>
+              <option>Mentai</option>
+              <option>Pedas Juara</option>
+              <option>Barbeque</option>
+              <option>Keju</option>
+            </select>
+            <div className="review-scales">
+              <Scale
+                label="Kerenyahan"
+                value={scores.crunch}
+                onChange={(n) => setScore("crunch", n)}
+              />
+              <Scale
+                label="Rasa"
+                value={scores.taste}
+                onChange={(n) => setScore("taste", n)}
+              />
+              <Scale
+                label="Kemasan"
+                value={scores.pack}
+                onChange={(n) => setScore("pack", n)}
+              />
+              <Scale
+                label="Harga"
+                value={scores.price}
+                onChange={(n) => setScore("price", n)}
+              />
+            </div>
+            <label className="field-label">Komentar atau saran</label>
+            <textarea placeholder="Ceritakan pengalamanmu..." required />
+            <label className="buy-again">
+              <input type="checkbox" /> <span>Mau beli Macboom lagi!</span>
+            </label>
+            {notice && (
+              <p className="form-notice" role="status">
+                {notice}
+              </p>
+            )}
+            <button className="dark-button" type="submit">
+              Kirim review +20 poin <Icon name="arrow" />
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
 }
 
-function Celebration({ message, onRestart }) { return <div className="celebration" role="status"><div className="confetti" aria-hidden="true">{Array.from({ length: 24 }, (_, index) => <i key={index}/>)}</div><div className="celebration-content"><span className="celebration-icon">★</span><p>SELAMAT!</p><strong>{message}</strong><small>Kamu berhasil menyelesaikan permainan.</small><button onClick={onRestart}>Main lagi</button></div></div> }
+function Celebration({ message, onRestart }) {
+  return (
+    <div className="celebration" role="status">
+      <div className="confetti" aria-hidden="true">
+        {Array.from({ length: 24 }, (_, index) => (
+          <i key={index} />
+        ))}
+      </div>
+      <div className="celebration-content">
+        <span className="celebration-icon">★</span>
+        <p>SELAMAT!</p>
+        <strong>{message}</strong>
+        <small>Kamu berhasil menyelesaikan permainan.</small>
+        <button onClick={onRestart}>Main lagi</button>
+      </div>
+    </div>
+  );
+}
 
 function CatchGame({ onEarn }) {
-  const [caught, setCaught] = useState(0); const [running, setRunning] = useState(false); const [result, setResult] = useState(''); const [drop, setDrop] = useState(0); const [left, setLeft] = useState(48); const [basketLeft, setBasketLeft] = useState(50); const [dragging, setDragging] = useState(false); const fieldRef = useRef(null)
-  const start = () => { setCaught(0); setResult(''); setDrop(0); setLeft(48); setBasketLeft(50); setRunning(true) }
-  useEffect(() => { if (!running) return; const end = setTimeout(() => { setRunning(false); setResult('Waktu habis — coba lagi!') }, 18000); return () => clearTimeout(end) }, [running])
-  const moveBasket = event => { if (!fieldRef.current) return; const bounds = fieldRef.current.getBoundingClientRect(); const next = Math.max(16, Math.min(84, ((event.clientX - bounds.left) / bounds.width) * 100)); setBasketLeft(next) }
-  const caughtAtBottom = () => { if (!running) return; if (Math.abs(left - basketLeft) < 19) { const next = caught + 1; setCaught(next); if (next >= 5) { setRunning(false); setResult('Mantap! +10 Boom Points'); onEarn(10) } else { setLeft(10 + Math.floor(Math.random() * 72)); setDrop(value => value + 1) } } else { setLeft(10 + Math.floor(Math.random() * 72)); setDrop(value => value + 1) } }
-  return <div className="game-play catch-play" ref={fieldRef} onPointerMove={event => dragging && moveBasket(event)} onPointerUp={() => setDragging(false)}><div className="game-status"><span>TERTANGKAP</span><b>{caught}/5</b></div>{!running && !result && <button className="cream-button" onClick={start}>Mulai menangkap <Icon name="play"/></button>}{running && <><MacboomObject key={drop} className="falling-mac" size={78} style={{ left: `${left}%` }} onAnimationEnd={caughtAtBottom}/><div className={`basket ${dragging ? 'dragging' : ''}`} style={{ left: `${basketLeft}%` }} onPointerDown={event => { event.currentTarget.setPointerCapture(event.pointerId); setDragging(true); moveBasket(event) }}><span>⌒⌒⌒</span><small>GESER</small></div></>}{result && (result.startsWith('Mantap!') ? <Celebration message="Kamu mendapatkan +10 Boom Points!" onRestart={start}/> : <div className="game-win">{result}<br/><button onClick={start}>Main lagi</button></div>)}</div>
+  const [caught, setCaught] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [result, setResult] = useState("");
+  const [drop, setDrop] = useState(0);
+  const [left, setLeft] = useState(48);
+  const [basketLeft, setBasketLeft] = useState(50);
+  const [dragging, setDragging] = useState(false);
+  const fieldRef = useRef(null);
+  const start = () => {
+    setCaught(0);
+    setResult("");
+    setDrop(0);
+    setLeft(48);
+    setBasketLeft(50);
+    setRunning(true);
+  };
+  useEffect(() => {
+    if (!running) return;
+    const end = setTimeout(() => {
+      setRunning(false);
+      setResult("Waktu habis — coba lagi!");
+    }, 18000);
+    return () => clearTimeout(end);
+  }, [running]);
+  const moveBasket = (event) => {
+    if (!fieldRef.current) return;
+    const bounds = fieldRef.current.getBoundingClientRect();
+    const next = Math.max(
+      16,
+      Math.min(84, ((event.clientX - bounds.left) / bounds.width) * 100),
+    );
+    setBasketLeft(next);
+  };
+  const caughtAtBottom = () => {
+    if (!running) return;
+    if (Math.abs(left - basketLeft) < 19) {
+      const next = caught + 1;
+      setCaught(next);
+      if (next >= 5) {
+        const awarded = onEarn(
+          "game-catch",
+          10,
+          "Catch the Macboom selesai! +10 poin",
+        );
+        setRunning(false);
+        setResult(
+          awarded
+            ? "Mantap! +10 Boom Points"
+            : "Permainan selesai — poin sudah diklaim",
+        );
+      } else {
+        setLeft(10 + Math.floor(Math.random() * 72));
+        setDrop((value) => value + 1);
+      }
+    } else {
+      setLeft(10 + Math.floor(Math.random() * 72));
+      setDrop((value) => value + 1);
+    }
+  };
+  return (
+    <div
+      className="game-play catch-play"
+      ref={fieldRef}
+      onPointerMove={(event) => dragging && moveBasket(event)}
+      onPointerUp={() => setDragging(false)}
+    >
+      <div className="game-status">
+        <span>TERTANGKAP</span>
+        <b>{caught}/5</b>
+      </div>
+      {!running && !result && (
+        <button className="cream-button" onClick={start}>
+          Mulai menangkap <Icon name="play" />
+        </button>
+      )}
+      {running && (
+        <>
+          <MacboomObject
+            key={drop}
+            className="falling-mac"
+            size={78}
+            style={{ left: `${left}%` }}
+            onAnimationEnd={caughtAtBottom}
+          />
+          <div
+            className={`basket ${dragging ? "dragging" : ""}`}
+            style={{ left: `${basketLeft}%` }}
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              setDragging(true);
+              moveBasket(event);
+            }}
+          >
+            <span>⌒⌒⌒</span>
+            <small>GESER</small>
+          </div>
+        </>
+      )}
+      {result &&
+        (result.startsWith("Mantap!") ? (
+          <Celebration
+            message="Kamu mendapatkan +10 Boom Points!"
+            onRestart={start}
+          />
+        ) : (
+          <div className="game-win">
+            {result}
+            <br />
+            <button onClick={start}>Main lagi</button>
+          </div>
+        ))}
+    </div>
+  );
 }
 function TapGame({ onEarn }) {
-  const [time, setTime] = useState(15); const [taps, setTaps] = useState(0); const [running, setRunning] = useState(false); const [finished, setFinished] = useState(false); const [macaronis, setMacaronis] = useState([]); const nextMacaroniId = useRef(0)
-  useEffect(() => { if (!running || time === 0) return; const timer = setTimeout(() => setTime(value => value - 1), 1000); return () => clearTimeout(timer) }, [running, time])
-  useEffect(() => { if (running && time === 0) { setRunning(false); setFinished(true); onEarn(10) } }, [time, running, onEarn])
-  useEffect(() => { if (!running) return; const createMacaroni = () => ({ id: nextMacaroniId.current++, left: 7 + Math.random() * 86, delay: Math.random() * .18, duration: 1.65 + Math.random() * .7, size: 50 + Math.floor(Math.random() * 25) }); const rain = () => setMacaronis(current => [...current, ...Array.from({ length: 3 }, createMacaroni)].slice(-21)); rain(); const interval = window.setInterval(rain, 620); return () => window.clearInterval(interval) }, [running])
-  const start = () => { setTime(15); setTaps(0); setFinished(false); setMacaronis([]); setRunning(true) }
-  const tap = id => { setTaps(value => value + 1); setMacaronis(current => current.filter(macaroni => macaroni.id !== id)) }
-  return <div className="game-play tap-play"><div className="timer">{time}<small>DETIK</small></div>{!running && !finished && <button className="cream-button" onClick={start}>Mulai 15 detik <Icon name="play"/></button>}{running && <><p className="tap-instruction">Tap semua makaroni yang turun!</p>{macaronis.map(macaroni => <button className="tap-mac tap-rain-mac" key={macaroni.id} style={{ left: `${macaroni.left}%`, animationDelay: `${macaroni.delay}s`, animationDuration: `${macaroni.duration}s` }} onClick={() => tap(macaroni.id)} onAnimationEnd={() => setMacaronis(current => current.filter(item => item.id !== macaroni.id))} aria-label="Tap makaroni yang jatuh"><MacboomObject size={macaroni.size}/></button>)}</>}{finished && <Celebration message={`${taps} tap! +10 Boom Points`} onRestart={start}/>}<p className="tap-score">Skor: <b>{taps}</b></p></div>
+  const [time, setTime] = useState(15);
+  const [taps, setTaps] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [rewardGranted, setRewardGranted] = useState(false);
+  const [macaronis, setMacaronis] = useState([]);
+  const nextMacaroniId = useRef(0);
+  useEffect(() => {
+    if (!running || time === 0) return;
+    const timer = setTimeout(() => setTime((value) => value - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [running, time]);
+  useEffect(() => {
+    if (running && time === 0) {
+      setRewardGranted(
+        onEarn("game-tap", 10, "Tap the Boom selesai! +10 poin"),
+      );
+      setRunning(false);
+      setFinished(true);
+    }
+  }, [time, running, onEarn]);
+  useEffect(() => {
+    if (!running) return;
+    const createMacaroni = () => ({
+      id: nextMacaroniId.current++,
+      left: 7 + Math.random() * 86,
+      delay: Math.random() * 0.18,
+      duration: 1.65 + Math.random() * 0.7,
+      size: 50 + Math.floor(Math.random() * 25),
+    });
+    const rain = () =>
+      setMacaronis((current) =>
+        [...current, ...Array.from({ length: 3 }, createMacaroni)].slice(-21),
+      );
+    rain();
+    const interval = window.setInterval(rain, 620);
+    return () => window.clearInterval(interval);
+  }, [running]);
+  const start = () => {
+    setTime(15);
+    setTaps(0);
+    setFinished(false);
+    setRewardGranted(false);
+    setMacaronis([]);
+    setRunning(true);
+  };
+  const tap = (id) => {
+    setTaps((value) => value + 1);
+    setMacaronis((current) => current.filter((macaroni) => macaroni.id !== id));
+  };
+  return (
+    <div className="game-play tap-play">
+      <div className="timer">
+        {time}
+        <small>DETIK</small>
+      </div>
+      {!running && !finished && (
+        <button className="cream-button" onClick={start}>
+          Mulai 15 detik <Icon name="play" />
+        </button>
+      )}
+      {running && (
+        <>
+          <p className="tap-instruction">Tap semua makaroni yang turun!</p>
+          {macaronis.map((macaroni) => (
+            <button
+              className="tap-mac tap-rain-mac"
+              key={macaroni.id}
+              style={{
+                left: `${macaroni.left}%`,
+                animationDelay: `${macaroni.delay}s`,
+                animationDuration: `${macaroni.duration}s`,
+              }}
+              onClick={() => tap(macaroni.id)}
+              onAnimationEnd={() =>
+                setMacaronis((current) =>
+                  current.filter((item) => item.id !== macaroni.id),
+                )
+              }
+              aria-label="Tap makaroni yang jatuh"
+            >
+              <MacboomObject size={macaroni.size} />
+            </button>
+          ))}
+        </>
+      )}
+      {finished && (
+        <Celebration
+          message={
+            rewardGranted
+              ? `${taps} tap! +10 Boom Points`
+              : `${taps} tap! Poin sudah diklaim`
+          }
+          onRestart={start}
+        />
+      )}
+      <p className="tap-score">
+        Skor: <b>{taps}</b>
+      </p>
+    </div>
+  );
 }
 function LuckyGame({ onEarn }) {
-  const prizes = [{ text: '+10 Boom Points', points: 10 }, { text: 'Voucher Diskon Macboom', points: 0 }, { text: '+20 Boom Points', points: 20 }]; const [result, setResult] = useState(''); const [phase, setPhase] = useState('idle'); const [selectedBox, setSelectedBox] = useState(null); const [winningBox, setWinningBox] = useState(null); const [boxes, setBoxes] = useState([0, 1, 2]); const [countdown, setCountdown] = useState(3)
-  useEffect(() => { if (phase !== 'shuffling') return; const timer = window.setTimeout(() => setPhase('picking'), 1800); return () => window.clearTimeout(timer) }, [phase])
-  useEffect(() => { if (phase !== 'revealing') return; if (countdown === 0) { const winningPrize = prizes[Math.floor(Math.random() * prizes.length)]; const nextResult = selectedBox === winningBox ? winningPrize : { text: 'Belum beruntung — coba lagi!', points: 0 }; setResult(nextResult.text); if (nextResult.points) onEarn(nextResult.points); setPhase('result'); return } const timer = window.setTimeout(() => setCountdown(value => value - 1), 700); return () => window.clearTimeout(timer) }, [phase, countdown, selectedBox, winningBox, onEarn])
-  const startRound = () => { const shuffled = [0, 1, 2].sort(() => Math.random() - .5); setResult(''); setSelectedBox(null); setBoxes(shuffled); setWinningBox(shuffled[Math.floor(Math.random() * shuffled.length)]); setCountdown(3); setPhase('shuffling') }
-  const chooseBox = box => { if (phase !== 'picking') return; setSelectedBox(box); setCountdown(3); setPhase('revealing') }
-  const status = phase === 'shuffling' ? 'KOTAK SEDANG DIACAK...' : phase === 'revealing' ? `MEMBUKA DALAM ${countdown}` : result || (phase === 'picking' ? 'PILIH SATU KOTAK' : 'SIAP BERMAIN')
-  const instruction = phase === 'shuffling' ? 'Perhatikan kotaknya—jangan sampai salah pilih!' : phase === 'revealing' ? `Tahan napas... ${countdown}` : phase === 'picking' ? 'Temukan makaroni yang bersembunyi di salah satu kotak!' : result || 'Satu makaroni, dua logo ZONK. Berani coba?'
-  return <div className={`game-play lucky-play lucky-box-game phase-${phase}`}><div className="lucky-instruction"><b>FIND THE MACBOOM</b></div><div className="lucky-box-stage"><div className="lucky-warning">⚠</div><div className="lucky-spark spark-left">✦</div><div className="lucky-spark spark-right">✷</div><div className="lucky-boxes">{boxes.map((box, index) => <button className={`lucky-box ${selectedBox === box ? 'selected' : ''} ${phase === 'shuffling' ? 'shuffling' : ''} ${phase === 'result' && box === winningBox ? 'winning' : ''}`} key={box} onClick={() => chooseBox(box)} disabled={phase !== 'picking'} aria-label={`Pilih kotak kejutan ${index + 1}`}><span className="box-number">?</span><span className="box-ribbon"/>{phase === 'result' && <span className={`lucky-reveal ${box === winningBox ? 'macaroni' : 'zonk'}`}>{box === winningBox ? <MacboomObject size={74}/> : <><b>✕</b><small>ZONK</small></>}</span>}</button>)}</div><div className="prize-slot">{status}</div></div><p>{instruction}</p><button className="cream-button" onClick={startRound} disabled={phase === 'shuffling' || phase === 'revealing'}>{phase === 'picking' ? 'Pilih kotak di atas' : result ? 'Main lagi' : 'Mulai tantangan'} <Icon name="play"/></button></div>
+  const prizes = [
+    { text: "+10 Boom Points", points: 10 },
+    { text: "Voucher Diskon Macboom", points: 0 },
+    { text: "+20 Boom Points", points: 20 },
+  ];
+  const [result, setResult] = useState("");
+  const [phase, setPhase] = useState("idle");
+  const [selectedBox, setSelectedBox] = useState(null);
+  const [winningBox, setWinningBox] = useState(null);
+  const [boxes, setBoxes] = useState([0, 1, 2]);
+  const [countdown, setCountdown] = useState(3);
+  useEffect(() => {
+    if (phase !== "shuffling") return;
+    const timer = window.setTimeout(() => setPhase("picking"), 1800);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+  useEffect(() => {
+    if (phase !== "revealing") return;
+    if (countdown === 0) {
+      const winningPrize = prizes[Math.floor(Math.random() * prizes.length)];
+      const nextResult =
+        selectedBox === winningBox
+          ? winningPrize
+          : { text: "Belum beruntung — coba lagi!", points: 0 };
+      setResult(nextResult.text);
+      if (nextResult.points)
+        onEarn(
+          "game-lucky",
+          nextResult.points,
+          `${nextResult.text} berhasil ditambahkan`,
+        );
+      setPhase("result");
+      return;
+    }
+    const timer = window.setTimeout(
+      () => setCountdown((value) => value - 1),
+      700,
+    );
+    return () => window.clearTimeout(timer);
+  }, [phase, countdown, selectedBox, winningBox, onEarn]);
+  const startRound = () => {
+    const shuffled = [0, 1, 2].sort(() => Math.random() - 0.5);
+    setResult("");
+    setSelectedBox(null);
+    setBoxes(shuffled);
+    setWinningBox(shuffled[Math.floor(Math.random() * shuffled.length)]);
+    setCountdown(3);
+    setPhase("shuffling");
+  };
+  const chooseBox = (box) => {
+    if (phase !== "picking") return;
+    setSelectedBox(box);
+    setCountdown(3);
+    setPhase("revealing");
+  };
+  const status =
+    phase === "shuffling"
+      ? "KOTAK SEDANG DIACAK..."
+      : phase === "revealing"
+        ? `MEMBUKA DALAM ${countdown}`
+        : result || (phase === "picking" ? "PILIH SATU KOTAK" : "SIAP BERMAIN");
+  const instruction =
+    phase === "shuffling"
+      ? "Perhatikan kotaknya—jangan sampai salah pilih!"
+      : phase === "revealing"
+        ? `Tahan napas... ${countdown}`
+        : phase === "picking"
+          ? "Temukan makaroni yang bersembunyi di salah satu kotak!"
+          : result || "Satu makaroni, dua logo ZONK. Berani coba?";
+  return (
+    <div className={`game-play lucky-play lucky-box-game phase-${phase}`}>
+      <div className="lucky-instruction">
+        <b>FIND THE MACBOOM</b>
+      </div>
+      <div className="lucky-box-stage">
+        <div className="lucky-warning">⚠</div>
+        <div className="lucky-spark spark-left">✦</div>
+        <div className="lucky-spark spark-right">✷</div>
+        <div className="lucky-boxes">
+          {boxes.map((box, index) => (
+            <button
+              className={`lucky-box ${selectedBox === box ? "selected" : ""} ${phase === "shuffling" ? "shuffling" : ""} ${phase === "result" && box === winningBox ? "winning" : ""}`}
+              key={box}
+              onClick={() => chooseBox(box)}
+              disabled={phase !== "picking"}
+              aria-label={`Pilih kotak kejutan ${index + 1}`}
+            >
+              <span className="box-number">?</span>
+              <span className="box-ribbon" />
+              {phase === "result" && (
+                <span
+                  className={`lucky-reveal ${box === winningBox ? "macaroni" : "zonk"}`}
+                >
+                  {box === winningBox ? (
+                    <MacboomObject size={74} />
+                  ) : (
+                    <>
+                      <b>✕</b>
+                      <small>ZONK</small>
+                    </>
+                  )}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="prize-slot">{status}</div>
+      </div>
+      <p>{instruction}</p>
+      <button
+        className="cream-button"
+        onClick={startRound}
+        disabled={phase === "shuffling" || phase === "revealing"}
+      >
+        {phase === "picking"
+          ? "Pilih kotak di atas"
+          : result
+            ? "Main lagi"
+            : "Mulai tantangan"}{" "}
+        <Icon name="play" />
+      </button>
+    </div>
+  );
 }
 
-function GameMenuIcon({ gameId }) { if (gameId === 'catch') return <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true"><path d="M20 19c7-8 19-9 29-3 10-6 22-5 29 3" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round"/><path d="M19 49h58l-7 25H26l-7-25Z" fill="none" stroke="currentColor" strokeWidth="7" strokeLinejoin="round"/><path d="M34 57v12M48 57v12M62 57v12" stroke="currentColor" strokeWidth="5" strokeLinecap="round"/><circle cx="48" cy="30" r="9" fill="currentColor"/></svg>; if (gameId === 'tap') return <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true"><path d="M49 13v29M31 25l12 13M67 25 55 38M25 47h18M71 47H53" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/><path d="M42 47v-9c0-5 8-5 8 0v12l5-5c4-4 9 2 5 6l-9 10v14c0 7-5 11-11 11h-8c-7 0-12-5-12-12V61l8-10c4-5 11 1 7 6l-4 5v11" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/></svg>; return <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true"><path d="M27 20h42l5 54H22l5-54Z" fill="none" stroke="currentColor" strokeWidth="7" strokeLinejoin="round"/><path d="M35 20c0-11 26-11 26 0" fill="none" stroke="currentColor" strokeWidth="7" strokeLinecap="round"/><path d="M35 46h26v16H35z" fill="currentColor"/><path d="m70 35 5 5 9-11" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/></svg> }
+function GameMenuIcon({ gameId }) {
+  if (gameId === "catch")
+    return (
+      <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true">
+        <path
+          d="M20 19c7-8 19-9 29-3 10-6 22-5 29 3"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        <path
+          d="M19 49h58l-7 25H26l-7-25Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="7"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M34 57v12M48 57v12M62 57v12"
+          stroke="currentColor"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+        <circle cx="48" cy="30" r="9" fill="currentColor" />
+      </svg>
+    );
+  if (gameId === "tap")
+    return (
+      <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true">
+        <path
+          d="M49 13v29M31 25l12 13M67 25 55 38M25 47h18M71 47H53"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+        />
+        <path
+          d="M42 47v-9c0-5 8-5 8 0v12l5-5c4-4 9 2 5 6l-9 10v14c0 7-5 11-11 11h-8c-7 0-12-5-12-12V61l8-10c4-5 11 1 7 6l-4 5v11"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  return (
+    <svg viewBox="0 0 96 96" className="game-menu-svg" aria-hidden="true">
+      <path
+        d="M27 20h42l5 54H22l5-54Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M35 20c0-11 26-11 26 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <path d="M35 46h26v16H35z" fill="currentColor" />
+      <path
+        d="m70 35 5 5 9-11"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 const GAME_CATALOG = {
-  catch: {number: '01', title: 'Catch the Macboom', text: 'Geser keranjang dan tangkap makaroni yang jatuh.', reward: '+10 poin' },
-  tap: {number: '02', title: 'Tap the Boom', text: 'Tekan objek Macboom sebanyak mungkin dalam 15 detik.', reward: '+10 poin' },
-  lucky: {number: '03', title: 'Find the Macboom', text: 'Temukan makaroni yang bersembunyi di antara kotak ZONK.', reward: 'Hadiah acak' },
-}
+  catch: {
+    number: "01",
+    title: "Catch the Macboom",
+    text: "Geser keranjang dan tangkap makaroni yang jatuh.",
+    reward: "+10 poin",
+  },
+  tap: {
+    number: "02",
+    title: "Tap the Boom",
+    text: "Tekan objek Macboom sebanyak mungkin dalam 15 detik.",
+    reward: "+10 poin",
+  },
+  lucky: {
+    number: "03",
+    title: "Find the Macboom",
+    text: "Temukan makaroni yang bersembunyi di antara kotak ZONK.",
+    reward: "Hadiah acak",
+  },
+};
 
 function Games({ onEarn }) {
-  const entries = Object.entries(GAME_CATALOG)
-  return <section className="games-section" id="games"><div className="section-heading"><div><p className="kicker orange"><span/> MAIN & MENANG</p><h2>Pilih game<br/>dan bikin <em>boom!</em></h2></div></div><div className="game-marquee" aria-label="Pilihan game"><div className="game-menu">{[...entries, ...entries].map(([id, item], index) => { const duplicate = index >= entries.length; return <button className={`game-option ${id}`} key={`${id}-${index}`} onClick={() => { window.location.hash = `game/${id}` }} aria-hidden={duplicate || undefined} tabIndex={duplicate ? -1 : undefined}><span className="game-option-number">{item.number}</span><span className="game-option-icon"><GameMenuIcon gameId={id}/></span><span className="game-option-copy"><b>{item.title}</b><small>{item.text}</small></span><span className="game-option-reward">{item.reward}</span><span className="game-option-arrow"><Icon name="arrow"/></span></button> })}</div></div></section>
+  const entries = Object.entries(GAME_CATALOG);
+  return (
+    <section className="games-section" id="games">
+      <div className="section-heading">
+        <div>
+          <p className="kicker orange">
+            <span /> MAIN & MENANG
+          </p>
+          <h2>
+            Pilih game
+            <br />
+            dan bikin <em>boom!</em>
+          </h2>
+        </div>
+      </div>
+      <div className="game-marquee" aria-label="Pilihan game">
+        <div className="game-menu">
+          {[...entries, ...entries].map(([id, item], index) => {
+            const duplicate = index >= entries.length;
+            return (
+              <button
+                className={`game-option ${id}`}
+                key={`${id}-${index}`}
+                onClick={() => {
+                  window.location.hash = `game/${id}`;
+                }}
+                aria-hidden={duplicate || undefined}
+                tabIndex={duplicate ? -1 : undefined}
+              >
+                <span className="game-option-number">{item.number}</span>
+                <span className="game-option-icon">
+                  <GameMenuIcon gameId={id} />
+                </span>
+                <span className="game-option-copy">
+                  <b>{item.title}</b>
+                  <small>{item.text}</small>
+                </span>
+                <span className="game-option-reward">{item.reward}</span>
+                <span className="game-option-arrow">
+                  <Icon name="arrow" />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function GamePage({ gameId, onEarn }) {
-  const game = GAME_CATALOG[gameId]
-  const gameContent = gameId === 'catch' ? <CatchGame onEarn={onEarn}/> : gameId === 'tap' ? <TapGame onEarn={onEarn}/> : <LuckyGame onEarn={onEarn}/>
-  return <main className="game-page"><header className="game-page-header"><a className="logo" href="#home"><span>mac</span>boom<i>.</i></a><button onClick={() => { window.location.hash = 'games' }}>← Semua game</button></header><section className="game-page-content"><div className="game-page-intro"><p className="kicker orange"><span/> GAME {game.number}</p><h1>{game.title}</h1><p>{game.text}</p></div><div className="game-page-play"><div className="game-page-mobile-title"><h2>{game.title}</h2><p>{game.text}</p></div>{gameContent}</div></section></main>
+  const game = GAME_CATALOG[gameId];
+  const gameContent =
+    gameId === "catch" ? (
+      <CatchGame onEarn={onEarn} />
+    ) : gameId === "tap" ? (
+      <TapGame onEarn={onEarn} />
+    ) : (
+      <LuckyGame onEarn={onEarn} />
+    );
+  return (
+    <main className="game-page">
+      <header className="game-page-header">
+        <a className="logo" href="#home">
+          <span>mac</span>boom<i>.</i>
+        </a>
+        <button
+          onClick={() => {
+            window.location.hash = "games";
+          }}
+        >
+          ← Semua game
+        </button>
+      </header>
+      <section className="game-page-content">
+        <div className="game-page-intro">
+          <p className="kicker orange">
+            <span /> GAME {game.number}
+          </p>
+          <h1>{game.title}</h1>
+          <p>{game.text}</p>
+        </div>
+        <div className="game-page-play">
+          <div className="game-page-mobile-title">
+            <h2>{game.title}</h2>
+            <p>{game.text}</p>
+          </div>
+          {gameContent}
+        </div>
+      </section>
+    </main>
+  );
 }
 
-function Rewards({ points }) { const activities = [['Scan QR kemasan', '10 poin'],['Mengisi review', '20 poin'],['Memainkan mini game', '10 poin'],['Skor tertentu', 'Bonus poin'],['Bagikan Macboom', 'Bonus poin'],['Beli lagi', 'Bonus poin']]; const rewards = [{ name: 'Voucher Macboom', type: 'voucher', color: 'voucher', points: 50 }, { name: 'Diskon pembelian berikutnya', type: 'discount', color: 'discount', points: 50 }, { name: 'DANA Kaget', type: 'dana', color: 'dana', image: '/dana.png', points: 100 }, { name: 'ShopeePay Kaget', type: 'shopee', color: 'shopee', image: '/spay.webp', points: 100 }]; return <section className="rewards" id="hadiah"><div className="reward-copy"><p className="kicker orange"><span/> BOOM POINTS</p><h2>Ngemilnya dapat,<br/><em>hadiahnya</em> juga dapat.</h2><p>Setiap aktivitas bikin poinmu bertambah. Tukarkan dengan reward yang kamu suka!</p><div className="point-balance"><span>POIN KAMU</span><b>{points}</b><small>Boom Points</small></div><p className="local-note"><Icon name="check" size={13}/> Point tersimpan di perangkat ini</p></div><div><div className="activity-list"><h3>Cara kumpulkan poin</h3>{activities.map(([activity, value]) => <div key={activity}><span>{activity}</span><b>+{value}</b></div>)}</div><h3 className="reward-promo-title">Tukar Point mu dengan Reward Promo</h3><div className="reward-grid reward-grid-four">{rewards.map(reward => <article className={`reward-item ${reward.color}`} key={reward.name}><span className="points">{reward.points} POIN</span><div className="reward-icon">{reward.image ? <img src={reward.image} alt=""/> : <RewardIcon type={reward.type}/>}</div><h3>{reward.name}</h3></article>)}</div><p className="reward-note">Voucher, diskon, DANA Kaget, dan ShopeePay Kaget merupakan reward terbatas berdasarkan ketersediaan anggaran serta periode promosi. </p></div></section> }
+const REWARDS = [
+  {
+    id: "voucher",
+    name: "Voucher Macboom",
+    type: "voucher",
+    color: "voucher",
+    points: 50,
+    description: "Voucher belanja Macboom untuk simulasi presentasi.",
+  },
+  {
+    id: "discount",
+    name: "Diskon pembelian berikutnya",
+    type: "discount",
+    color: "discount",
+    points: 50,
+    description: "Kode diskon simulasi untuk pembelian berikutnya.",
+  },
+  {
+    id: "dana",
+    name: "DANA Kaget",
+    type: "dana",
+    color: "dana",
+    image: "/dana.png",
+    points: 100,
+    description: "Klaim simulasi; tidak ada pencairan dana sungguhan.",
+  },
+  {
+    id: "shopee",
+    name: "ShopeePay Kaget",
+    type: "shopee",
+    color: "shopee",
+    image: "/spay.webp",
+    points: 100,
+    description: "Klaim simulasi; tidak ada pencairan dana sungguhan.",
+  },
+];
 
-function App() { const getActiveGame = () => { const match = window.location.hash.match(/^#game\/(catch|tap|lucky)$/); return match ? match[1] : null }; const [reviewOpen, setReviewOpen] = useState(false); const [activeGame, setActiveGame] = useState(getActiveGame); const [points, setPoints] = useState(() => { const savedPoints = Number(localStorage.getItem('macboom-boom-points')); return Number.isFinite(savedPoints) && savedPoints >= 0 ? savedPoints : 10 }); useEffect(() => { localStorage.setItem('macboom-boom-points', String(points)) }, [points]); useEffect(() => { const syncRoute = () => setActiveGame(getActiveGame()); window.addEventListener('hashchange', syncRoute); return () => window.removeEventListener('hashchange', syncRoute) }, []); const earn = amount => setPoints(value => value + amount); const contactUrl = 'https://wa.me/6281326741297?text=Halo%20Macboom%2C%20saya%20ingin%20bertanya%20tentang%20Macboom.'; if (activeGame) return <GamePage gameId={activeGame} onEarn={earn}/>; return <main id="home"><Header onReview={() => setReviewOpen(true)}/><section className="hero"><div className="hero-copy"><p className="kicker"><span/> MAKAN ENAK, DAPAT LEBIH</p><h1>Satu Scan.<br/><em>Banyak Kejutan.</em></h1><p className="hero-text">Setiap bungkus Macboom punya kejutan. Scan QR-nya, mainkan gamenya, dan kumpulkan reward-mu!</p><div className="hero-actions"><a href="#games" className="primary-button">Mulai petualangan <Icon name="arrow"/></a><button className="text-button" onClick={() => setReviewOpen(true)}>Review Macboom <Icon name="star" size={17}/></button></div><div className="social-proof"><div className="avatars"><b>R</b><b>A</b><b>N</b><b>+</b></div><span><strong>12.8K+</strong> Boomers sudah ikut!</span></div></div><ProductVisual/></section><section className="how" id="cara-kerja"><div className="section-heading"><div><p className="kicker orange"><span/> GAMPANG BANGET</p><h2>Cuma 3 langkah<br/>buat dapet <em>boom!</em></h2></div><p>Bungkus Macboom bukan cuma buat ngemil. Ada pengalaman seru yang nungguin kamu di dalamnya.</p></div><div className="steps"><StepCard icon="scan" title="Scan QR-nya" text="Arahkan kamera ke QR code di kemasan Macboom." color="yellow"/><StepConnector/><StepCard icon="play" title="Main & review" text="Coba mini game seru atau kasih ulasan jujur kamu." color="orange"/><StepConnector reverse/><StepCard icon="gift" title="Klaim reward" text="Kumpulkan poin dan tukar dengan hadiah pilihanmu." color="purple"/></div></section><Games onEarn={earn}/><Rewards points={points}/><footer><a className="logo" href="#home"><span>mac</span>boom<i>.</i></a><p className="footer-tagline">Teman ngemil paling <b>boom!</b></p><div><a href="https://www.instagram.com/macboom.id?stkn=MTV0N3JlMXVrOWhvZw==" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.tiktok.com/@team4macboom?_r=1&_t=ZS-99saQdSL1t6" target="_blank" rel="noreferrer">TikTok</a><a href={contactUrl} target="_blank" rel="noreferrer">Kontak</a></div><small className="footer-copyright">© 2026 Macboom. Dibuat untuk para pecinta rasa.</small></footer>{reviewOpen && <ReviewModal onClose={() => setReviewOpen(false)} onReward={earn}/>}</main> }
-export default App
+const readStoredList = (key) => {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+};
+const readSessionList = (key) => {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(key) || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+};
+
+function Toast({ message }) {
+  return message ? (
+    <div className="toast" role="status" aria-live="polite">
+      <Icon name="check" size={16} />
+      {message}
+    </div>
+  ) : null;
+}
+
+function ClaimModal({ reward, points, onClose, onConfirm }) {
+  const confirmRef = useRef(null);
+  const isWallet = reward.type === "dana" || reward.type === "shopee";
+  useEffect(() => {
+    confirmRef.current?.focus();
+    const escape = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", escape);
+    return () => window.removeEventListener("keydown", escape);
+  }, [onClose]);
+  return (
+    <div
+      className="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="claim-title"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="claim-modal">
+        <button
+          className="close"
+          onClick={onClose}
+          aria-label="Tutup konfirmasi klaim"
+        >
+          <Icon name="close" />
+        </button>
+        <p className="eyebrow">KONFIRMASI KLAIM · SIMULASI</p>
+        <div className={`claim-icon ${reward.color}`}>
+          {reward.image ? (
+            <img src={reward.image} alt="" />
+          ) : (
+            <RewardIcon type={reward.type} />
+          )}
+        </div>
+        <h2 id="claim-title">Tukar {reward.name}?</h2>
+        <p>{reward.description}</p>
+        <div className="claim-summary">
+          <span>
+            Saldo saat ini <b>{points} poin</b>
+          </span>
+          <span>
+            Ditukar <b>−{reward.points} poin</b>
+          </span>
+          <strong>
+            Sisa saldo <b>{points - reward.points} poin</b>
+          </strong>
+        </div>
+        {isWallet && (
+          <p className="demo-disclaimer">
+            Ini hanya feedback interaktif untuk presentasi; saldo e-wallet tidak
+            akan diproses.
+          </p>
+        )}
+        <div className="claim-actions">
+          <button className="secondary-button" onClick={onClose}>
+            Batal
+          </button>
+          <button
+            ref={confirmRef}
+            className="dark-button"
+            onClick={() => onConfirm(reward)}
+          >
+            Tukar sekarang <Icon name="arrow" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RewardHistory({ claims }) {
+  return (
+    <section className="reward-history" aria-labelledby="reward-history-title">
+      <div>
+        <p className="kicker orange">
+          <span /> KOLEKSI DEMO
+        </p>
+        <h2 id="reward-history-title">Reward kamu</h2>
+      </div>
+      {claims.length === 0 ? (
+        <p className="empty-history">
+          Belum ada reward yang diklaim. Kumpulkan poin, lalu pilih hadiah
+          favoritmu.
+        </p>
+      ) : (
+        <div className="claim-history-list">
+          {claims.map((claim) => (
+            <article className="claim-history-item" key={claim.id}>
+              <div>
+                <b>{claim.name}</b>
+                <small>
+                  {new Date(claim.claimedAt).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </small>
+              </div>
+              <div>
+                {claim.code ? (
+                  <>
+                    <span>KODE SIMULASI</span>
+                    <strong>{claim.code}</strong>
+                  </>
+                ) : (
+                  <>
+                    <span>STATUS DEMO</span>
+                    <strong>Siap diverifikasi</strong>
+                  </>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Rewards({ points, claims, onSelectReward, onNeedPoints }) {
+  const activities = [
+    ["Scan QR kemasan", "10 poin"],
+    ["Mengisi review", "20 poin"],
+    ["Memainkan mini game", "10 poin"],
+  ];
+  const claimedRewardIds = new Set(claims.map((claim) => claim.rewardId));
+  return (
+    <>
+      <section className="rewards" id="hadiah">
+        <div className="reward-copy">
+          <p className="kicker orange">
+            <span /> BOOM POINTS
+          </p>
+          <h2>
+            Ngemilnya dapat,
+            <br />
+            <em>hadiahnya</em> juga dapat.
+          </h2>
+          <p>
+            Setiap aktivitas bikin poinmu bertambah. Tukarkan dengan reward yang
+            kamu suka!
+          </p>
+          <div className="point-balance" aria-live="polite">
+            <span>POIN KAMU</span>
+            <b key={points} className="balance-number">
+              {points}
+            </b>
+            <small>Boom Points</small>
+          </div>
+          <p className="local-note">
+            <Icon name="check" size={13} /> Demo tersimpan di perangkat ini
+          </p>
+        </div>
+        <div>
+          <div className="activity-list">
+            <h3>Cara kumpulkan poin</h3>
+            {activities.map(([activity, value]) => (
+              <div key={activity}>
+                <span>{activity}</span>
+                <b>+{value}</b>
+              </div>
+            ))}
+          </div>
+          <h3 className="reward-promo-title">
+            Tukar poinmu dengan reward promo
+          </h3>
+          <div className="reward-grid reward-grid-four">
+            {REWARDS.map((reward) => {
+              const claimed = claimedRewardIds.has(reward.id);
+              const missing = Math.max(0, reward.points - points);
+              return (
+                <button
+                  type="button"
+                  className={`reward-item ${reward.color} ${claimed ? "claimed" : ""} ${missing ? "locked" : ""}`}
+                  key={reward.id}
+                  onClick={() =>
+                    claimed
+                      ? null
+                      : missing
+                        ? onNeedPoints(missing)
+                        : onSelectReward(reward)
+                  }
+                  disabled={claimed}
+                  aria-label={
+                    claimed
+                      ? `${reward.name} sudah diklaim`
+                      : missing
+                        ? `${reward.name}, butuh ${missing} poin lagi`
+                        : `Klaim ${reward.name}`
+                  }
+                >
+                  <span className="points">
+                    {claimed ? "SUDAH DIKLAIM" : `${reward.points} POIN`}
+                  </span>
+                  <div className="reward-icon">
+                    {reward.image ? (
+                      <img src={reward.image} alt="" />
+                    ) : (
+                      <RewardIcon type={reward.type} />
+                    )}
+                  </div>
+                  <h3>{reward.name}</h3>
+                  {!claimed && missing > 0 && (
+                    <small className="reward-need">
+                      Butuh {missing} poin lagi
+                    </small>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p className="reward-note">
+            Semua reward di halaman ini adalah simulasi interaktif untuk
+            presentasi dan tersimpan hanya di perangkat ini.
+          </p>
+        </div>
+      </section>
+      <RewardHistory claims={claims} />
+    </>
+  );
+}
+
+function App() {
+  const getActiveGame = () => {
+    const match = window.location.hash.match(/^#game\/(catch|tap|lucky)$/);
+    return match ? match[1] : null;
+  };
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [activeGame, setActiveGame] = useState(getActiveGame);
+  const [points, setPoints] = useState(() => {
+    const savedPoints = Number(localStorage.getItem("macboom-boom-points"));
+    return Number.isFinite(savedPoints) && savedPoints >= 0 ? savedPoints : 10;
+  });
+  const [claims, setClaims] = useState(() =>
+    readStoredList("macboom-reward-claims"),
+  );
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [toast, setToast] = useState("");
+  const earnedActivities = useRef(
+    new Set(readSessionList("macboom-demo-earned")),
+  );
+  const toastTimer = useRef(null);
+  const notify = (message) => {
+    window.clearTimeout(toastTimer.current);
+    setToast(message);
+    toastTimer.current = window.setTimeout(() => setToast(""), 3600);
+  };
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+  useEffect(() => {
+    localStorage.setItem("macboom-boom-points", String(points));
+  }, [points]);
+  useEffect(() => {
+    localStorage.setItem("macboom-reward-claims", JSON.stringify(claims));
+  }, [claims]);
+  useEffect(() => {
+    const syncRoute = () => setActiveGame(getActiveGame());
+    window.addEventListener("hashchange", syncRoute);
+    return () => window.removeEventListener("hashchange", syncRoute);
+  }, []);
+  const earn = (activity, amount, successMessage) => {
+    if (earnedActivities.current.has(activity)) {
+      notify("Poin untuk aktivitas ini sudah didapat pada sesi demo ini.");
+      return false;
+    }
+    earnedActivities.current.add(activity);
+    sessionStorage.setItem(
+      "macboom-demo-earned",
+      JSON.stringify([...earnedActivities.current]),
+    );
+    setPoints((value) => value + amount);
+    notify(successMessage);
+    return true;
+  };
+  const claimReward = (reward) => {
+    if (
+      points < reward.points ||
+      claims.some((claim) => claim.rewardId === reward.id)
+    )
+      return;
+    const isWallet = reward.type === "dana" || reward.type === "shopee";
+    const claim = {
+      id: `${reward.id}-${Date.now()}`,
+      rewardId: reward.id,
+      name: reward.name,
+      claimedAt: new Date().toISOString(),
+      code: isWallet
+        ? null
+        : `MB-${reward.id.slice(0, 3).toUpperCase()}-${String(Date.now()).slice(-6)}`,
+    };
+    setPoints((value) => value - reward.points);
+    setClaims((value) => [claim, ...value]);
+    setSelectedReward(null);
+    notify(
+      isWallet
+        ? "Klaim demo berhasil. Reward siap diverifikasi."
+        : "Reward berhasil diklaim. Kode simulasi sudah tersimpan.",
+    );
+  };
+  const showMissingPoints = (missing) => {
+    notify(`Butuh ${missing} poin lagi. Coba game atau isi review!`);
+    document
+      .getElementById("games")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  const contactUrl =
+    "https://wa.me/6281326741297?text=Halo%20Macboom%2C%20saya%20ingin%20bertanya%20tentang%20Macboom.";
+  if (activeGame)
+    return (
+      <>
+        <GamePage gameId={activeGame} onEarn={earn} />
+        <Toast message={toast} />
+      </>
+    );
+  return (
+    <main id="home">
+      <Header onReview={() => setReviewOpen(true)} />
+      <section className="hero">
+        <div className="hero-copy">
+          <p className="kicker">
+            <span /> MAKAN ENAK, DAPAT LEBIH
+          </p>
+          <h1>
+            Satu Scan.
+            <br />
+            <em>Banyak Kejutan.</em>
+          </h1>
+          <p className="hero-text">
+            Setiap bungkus Macboom punya kejutan. Scan QR-nya, mainkan gamenya,
+            dan kumpulkan reward-mu!
+          </p>
+          <div className="hero-actions">
+            <a href="#games" className="primary-button">
+              Mulai petualangan <Icon name="arrow" />
+            </a>
+            <button className="text-button" onClick={() => setReviewOpen(true)}>
+              Review Macboom <Icon name="star" size={17} />
+            </button>
+          </div>
+          <div className="social-proof">
+            <div className="avatars">
+              <b>R</b>
+              <b>A</b>
+              <b>N</b>
+              <b>+</b>
+            </div>
+            <span>
+              <strong>12.8K+</strong> Boomers sudah ikut!
+            </span>
+          </div>
+        </div>
+        <ProductVisual
+          onScan={() => earn("scan", 10, "QR berhasil discan! +10 Boom Points")}
+        />
+      </section>
+      <section className="how" id="cara-kerja">
+        <div className="section-heading">
+          <div>
+            <p className="kicker orange">
+              <span /> GAMPANG BANGET
+            </p>
+            <h2>
+              Cuma 3 langkah
+              <br />
+              buat dapet <em>boom!</em>
+            </h2>
+          </div>
+          <p>
+            Bungkus Macboom bukan cuma buat ngemil. Ada pengalaman seru yang
+            nungguin kamu di dalamnya.
+          </p>
+        </div>
+        <div className="steps">
+          <StepCard
+            icon="scan"
+            title="Scan QR-nya"
+            text="Arahkan kamera ke QR code di kemasan Macboom."
+            color="yellow"
+          />
+          <StepConnector />
+          <StepCard
+            icon="play"
+            title="Main & review"
+            text="Coba mini game seru atau kasih ulasan jujur kamu."
+            color="orange"
+          />
+          <StepConnector reverse />
+          <StepCard
+            icon="gift"
+            title="Klaim reward"
+            text="Kumpulkan poin dan tukar dengan hadiah pilihanmu."
+            color="purple"
+          />
+        </div>
+      </section>
+      <Games onEarn={earn} />
+      <Rewards
+        points={points}
+        claims={claims}
+        onSelectReward={setSelectedReward}
+        onNeedPoints={showMissingPoints}
+      />
+      <footer>
+        <a className="logo" href="#home">
+          <span>mac</span>boom<i>.</i>
+        </a>
+        <p className="footer-tagline">
+          Teman ngemil paling <b>boom!</b>
+        </p>
+        <div>
+          <a
+            href="https://www.instagram.com/macboom.id?stkn=MTV0N3JlMXVrOWhvZw=="
+            target="_blank"
+            rel="noreferrer"
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.tiktok.com/@team4macboom?_r=1&_t=ZS-99saQdSL1t6"
+            target="_blank"
+            rel="noreferrer"
+          >
+            TikTok
+          </a>
+          <a href={contactUrl} target="_blank" rel="noreferrer">
+            Kontak
+          </a>
+        </div>
+        <small className="footer-copyright">
+          © 2026 Macboom. Dibuat untuk para pecinta rasa.
+        </small>
+      </footer>
+      {reviewOpen && (
+        <ReviewModal onClose={() => setReviewOpen(false)} onReward={earn} />
+      )}{" "}
+      {selectedReward && (
+        <ClaimModal
+          reward={selectedReward}
+          points={points}
+          onClose={() => setSelectedReward(null)}
+          onConfirm={claimReward}
+        />
+      )}
+      <Toast message={toast} />
+    </main>
+  );
+}
+export default App;
