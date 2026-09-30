@@ -1,5 +1,5 @@
 # Static-only deployment: do not deploy API functions or local server code.
-api/
-server/
-lib/
-BACKEND.md
+/api/
+/server/
+/lib/
+/BACKEND.md
